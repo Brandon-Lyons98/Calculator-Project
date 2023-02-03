@@ -1,62 +1,99 @@
-const grid = document.querySelector('#calc-grid');
+const buttons = document.querySelectorAll('button');
+const screen = document.getElementById('screen');
+screen.textContent = '';
+const answer = document.getElementById('answer');
+answer.textContent = '0';
 
-function createGrid() {
-    for (let i = 1; i < 20; i++) {
-        const div = document.createElement('div');
-        div.classList.add('buttons');
 
-        if (i === 17) {
-            div.classList.add('lower-buttons')
-        } else if (i === 18) {
-            div.classList.add('lower-buttons')
-        } else if (i === 19) {
-            div.classList.add('lower-buttons')
-        }
-
-        if (i === 17) {
-            div.textContent = '0';
-            div.classList.add('button-zero');
-        } else if (i === 13) {
-            div.textContent = '1';
-        } else if (i === 14) {
-            div.textContent = '2';
-        } else if (i === 15) {
-            div.textContent = '3';
-        } else if (i === 9) {
-            div.textContent = '4';
-        } else if (i === 10) {
-            div.textContent = '5';
-        } else if (i === 11) {
-            div.textContent = '6';
-        } else if (i === 5) {
-            div.textContent = '7';
-        } else if (i === 6) {
-            div.textContent = '8';
-        } else if (i === 7) {
-            div.textContent = '9';
-        } else if (i === 1) {
-            div.textContent = 'AC';
-        } else if (i === 2) {
-            div.textContent = '+/-';
-        } else if (i === 3) {
-            div.textContent = '%';
-        } else if (i === 4) {
-            div.textContent = '/';
-        } else if (i === 8) {
-            div.textContent = '*';
-        } else if (i === 12) {
-            div.textContent = '-';
-        } else if (i === 16) {
-            div.textContent = '+';
-        } else if (i === 18) {
-            div.textContent = '.';
-        } else if (i === 19) {
-            div.textContent = '=';
-        }
-        grid.appendChild(div);
+function roundDecimal(answer) {
+  if (answer.toString().indexOf('.') !== -1) {
+    if (answer.toString().split('.')[1].length > 5) {
+      return answer.toFixed(5);
     }
+  }
+  return answer;
 }
 
+function add(a, b) {
+  const answer = a + b;
+  return roundDecimal(answer);
+}
 
+function subtract(a, b) {
+  const answer = a - b;
+  return roundDecimal(answer);
+}
 
-createGrid();
+function multiply(a, b) {
+  const answer = a * b;
+  return roundDecimal(answer);
+}
+
+function divide(a, b) {
+  if (b === 0) {
+    return 'Oops';
+  }
+  const answer = a / b;
+  return roundDecimal(answer);
+}
+
+function power(a, b) {
+  let answer = a;
+  for (let i = 1; i < b; i += 1) {
+    answer *= a;
+  }
+  return roundDecimal(answer);
+}
+
+function handleClicks(myString) {
+  for (let i = 0; i < myString.length; i++) {
+    if (myString[i] === '+') {
+      let index = myString.indexOf('+');
+      let num1 = Number(myString.slice(0, index));
+      let num2 = Number(myString.slice(index + 1, myString.length - 1));
+      return add(num1, num2);
+    }
+    if (myString[i] === '-') {
+      let index = myString.indexOf('-');
+      let num1 = Number(myString.slice(0, index));
+      let num2 = Number(myString.slice(index + 1, myString.length - 1));
+      return subtract(num1, num2);
+    }
+    if (myString[i] === '*') {
+      let index = myString.indexOf('*');
+      let num1 = Number(myString.slice(0, index));
+      let num2 = Number(myString.slice(index + 1, myString.length - 1));
+      return multiply(num1, num2);
+    }
+    if (myString[i] === '/') {
+      let index = myString.indexOf('/');
+      let num1 = Number(myString.slice(0, index));
+      let num2 = Number(myString.slice(index + 1, myString.length - 1));
+      return divide(num1, num2);
+    }
+    if (myString[i] === '^') {
+      let index = myString.indexOf('^');
+      let num1 = Number(myString.slice(0, index));
+      let num2 = Number(myString.slice(index + 1, myString.length - 1));
+      return power(num1, num2);
+    }
+  }
+}
+
+buttons.forEach((button) => {
+  button.addEventListener('click', () => {
+    screen.textContent += button.textContent;
+    if (button.id === 'equals') {
+      answer.textContent = handleClicks(screen.textContent);
+      screen.textContent = '';
+    }
+    if (button.id === 'backspace') {
+      screen.textContent = screen.textContent.slice(0, -4);
+    }
+
+    if (button.id === 'clear') {
+      screen.textContent = '';
+      answer.textContent = '0';
+    }
+  });
+});
