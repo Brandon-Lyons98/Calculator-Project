@@ -55,6 +55,18 @@ body {
   width: 300px;
 }
 
+button {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
 .button {
   border-radius: 10px;
+}
+
+#clear,
+#backspace,
+#operator,
+#equals {
+  background-color: orange;
 }
